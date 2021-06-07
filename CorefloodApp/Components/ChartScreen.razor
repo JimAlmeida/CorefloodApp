@@ -1,16 +1,17 @@
-﻿@using Microsoft.JSInterop;
-@using Microsoft.AspNetCore.Components;
-@using Microsoft.AspNetCore.Components.Web;
+﻿@using Microsoft.AspNetCore.Components.Web;
 @using Blazorise.Charts;
 @using Blazorise;
 
+<div class="container ms-2 mt-2">
+    <h1>Coreflood Simulator</h1>
+    <h2>Simulation Results:</h2>
 
-<h1>ChartScreen</h1>
-<h2>Below lies the chart:</h2>
+    <Button Clicked="@(async () => await HandleRedraw())" Class="btn btn-primary">Redraw</Button>
+</div>
 
-<Button Clicked="@(async () => await HandleRedraw())">Redraw</Button>
-<LineChart @ref="lineChart" TItem="double" />
-
+<div class="container">
+    <LineChart @ref="lineChart" TItem="double" />
+</div>
 
 @code {
     LineChart<double> lineChart;
