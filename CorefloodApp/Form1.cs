@@ -1,15 +1,9 @@
-﻿using CorefloodApp.wwwroot;
-using Microsoft.AspNetCore.Components.WebView.WindowsForms;
+﻿using Microsoft.AspNetCore.Components.WebView.WindowsForms;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using CorefloodApp.Components;
+
 using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
@@ -35,8 +29,6 @@ namespace CorefloodApp
 
             serviceCollection.AddBlazorWebView();
             
-            
-            
             var blazor = new BlazorWebView()
             {
                 Dock = DockStyle.Fill,
@@ -46,6 +38,7 @@ namespace CorefloodApp
 
             blazor.RootComponents.Add<SimForm>("#form");
             blazor.RootComponents.Add<ChartScreen>("#chartscreen");
+          
             Controls.Add(blazor);
         }
 
