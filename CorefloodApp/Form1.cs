@@ -18,10 +18,12 @@ namespace CorefloodApp
 {
     public partial class Form1 : System.Windows.Forms.Form
     {
-        public ServiceCollection serviceCollection = new ServiceCollection();
+    
         public Form1()
         {
-            //var serviceCollection = new ServiceCollection();
+            InitializeComponent();
+
+            var serviceCollection = new ServiceCollection();
 
             //must come before BlazorWebView, otherwise it won't work.
             serviceCollection.AddBlazorise(options =>
@@ -33,7 +35,7 @@ namespace CorefloodApp
 
             serviceCollection.AddBlazorWebView();
             
-            InitializeComponent();
+            
             
             var blazor = new BlazorWebView()
             {
