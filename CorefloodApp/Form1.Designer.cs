@@ -18,6 +18,7 @@ namespace CorefloodApp
             {
                 components.Dispose();
             }
+            
             base.Dispose(disposing);
         }
 

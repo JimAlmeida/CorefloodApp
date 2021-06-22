@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorefloodApp", "CorefloodAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coreflood", "..\Coreflood\Coreflood\Coreflood.csproj", "{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Coreflood Installer", "Coreflood Installer\Coreflood Installer.vdproj", "{02C530C8-86D8-40DB-8CE7-B83B50B44548}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,8 @@ Global
 		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02C530C8-86D8-40DB-8CE7-B83B50B44548}.Debug|Any CPU.ActiveCfg = Debug
+		{02C530C8-86D8-40DB-8CE7-B83B50B44548}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
