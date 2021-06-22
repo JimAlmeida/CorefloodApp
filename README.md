@@ -31,8 +31,8 @@ Other than that, the experience is smooth. You can use the installer and enjoy t
 
 ### Screen Captures
 
-![CorefloodApp1](C:\Users\thiag\Desktop\CSharp\CorefloodApp1.png)
+![CorefloodApp1](https://imgur.com/PSzSqp4.png)
 
-![CorefloodApp2](C:\Users\thiag\Desktop\CSharp\CorefloodApp2.png)
+![CorefloodApp2](https://imgur.com/TLthYHl.png)
 
-![CorefloodApp3](C:\Users\thiag\Desktop\CSharp\CorefloodApp3.png)
+![CorefloodApp3](https://imgur.com/x1X9Vko.png)
