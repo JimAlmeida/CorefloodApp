@@ -1,0 +1,197 @@
+﻿@using Coreflood;
+@using Blazorise;
+@using MatBlazor;
+
+<span class="d-block bg-secondary text-white text-center display-4 p-1">COREFLOOD</span>
+<div class="container-fluid mt-3">
+    <div class="row justify-content-center m-3">
+        <p class="lead">
+            This software provides a friendly interface for simulating the two-phase flow of oil and water in a rock plug under the drainage and imbibition regimes.
+        </p>
+    </div>
+    <div class="d-flex flex-column m-3">
+        <p class="h3 text-center">Simulation Progress:</p>
+        <div class="progress" style="height: 32px">
+            @rockInputProgressBar
+            @simInputProgressBar
+            @simStartProgressBar
+            @simFinishedProgressBar
+        </div> 
+    </div>
+
+    <br/>
+    <MatDivider Padded="true"></MatDivider>
+    <div class="row m-3">
+        <p class="h2 text-center">Input Data</p>
+        <div class="row mb-3">
+            <div class="col-2">
+                <MatSelect Label="Pick a Unit System" Outlined="true" TValue="string" ValueChanged="changeFormUnitSystem">
+                <MatOptionString Value="darcy">Darcy</MatOptionString>
+                <MatOptionString Value="si">International System</MatOptionString>
+                </MatSelect>
+            </div>
+            <div class="col-10">
+                @needsParameterAlert
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="accordion" id="accordionExample">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Core Plug Parameters
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <CoreForm FormComplete="CoreFormDataHandler" @ref="coreForm"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Simulation Parameters Input
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                <SimForm FormComplete="SimFormDataHandler" @ref="simulationForm"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+           <Button Clicked="@(async () => await startSim())" Class="btn btn-outline-danger m-2 p-2">Start Simulation</Button> 
+        </div>
+    </div>
+    <p class="h2 text-center">Simulation Results</p>
+    <MatDivider Padded="true"></MatDivider>
+    <p class="lead m-3">Below are the results of the simulation displayed as charts. Move the slider to see how the pressure or saturation in the rock plug evolved during the experiment.</p>
+    <div class="row m-3">
+        <div class="col-md-6">
+            <DrainagePressureChart @ref="drainagePressureChart" plotData="@drainagePressureChartData"/>
+        </div>
+        <div class="col-md-6">
+             <DrainageSaturationChart @ref="drainageSaturationChart" plotData="@drainageSaturationChartData"/>
+        </div>
+    </div>
+    <div class="row m-3">
+        <div class="col-md-6">
+            <ImbibitionPressureChart @ref="imbibitionPressureChart" plotData="@imbibitionPressureChartData"/>
+        </div>
+        <div class="col-md-6">
+            <ImbibitionSaturationChart @ref="imbibitionSaturationChart" plotData="@imbibitionSaturationChartData"/>
+        </div>
+    </div>
+
+
+</div>
+
+
+@code {
+    private IMPES simulation;
+    private RCore rock_core;
+    private IMPESArgs simulation_args;
+    private CoreArgs rock_args;
+    private bool core_form_is_submitted = false;
+    private bool sim_form_is_submitted = false;
+    private string simulation_status { get; set; }
+
+    private SimForm simulationForm;
+    private CoreForm coreForm;
+
+    private DrainagePressureChart drainagePressureChart;
+    private DrainageSaturationChart drainageSaturationChart;
+    private ImbibitionPressureChart imbibitionPressureChart;
+    private ImbibitionSaturationChart imbibitionSaturationChart;
+
+    private PlotData drainagePressureChartData;
+    private PlotData drainageSaturationChartData;
+    private PlotData imbibitionPressureChartData;
+    private PlotData imbibitionSaturationChartData;
+
+    private MarkupString simInputProgressBar = new MarkupString("");
+    private MarkupString rockInputProgressBar = new MarkupString("");
+    private MarkupString simStartProgressBar = new MarkupString("");
+    private MarkupString simFinishedProgressBar = new MarkupString("");
+
+    private MarkupString needsParameterAlert = new("");
+
+    private void CoreFormDataHandler(CoreArgs form_data)
+    {
+        rock_args = form_data;
+        rockInputProgressBar = ProgressBarElements.AddedRockInput;
+        core_form_is_submitted = true;
+    }
+
+    private void SimFormDataHandler(IMPESArgs form_data)
+    {
+        simulation_args = form_data;
+        simInputProgressBar = ProgressBarElements.AddedSimInput;
+        sim_form_is_submitted = true;
+    }
+
+    private void changeFormUnitSystem(string new_unit_system)
+    {
+        simulationForm.changeUnitSystem(new_unit_system);
+        coreForm.changeUnitSystem(new_unit_system);
+    }
+
+    private void sendPlotData()
+    {
+        drainagePressureChartData = new PlotData()
+        {
+            drainage_pressure = simulation.GetPressureDrainage(),
+            blocks = simulation_args.number_of_blocks
+        };
+
+        drainageSaturationChartData = new PlotData()
+        {
+            drainage_saturation = simulation.GetSaturationDrainage(),
+            blocks = simulation_args.number_of_blocks
+        };
+
+        imbibitionPressureChartData = new PlotData()
+        {
+            imbibition_pressure = simulation.GetPressureImbibition(),
+            blocks = simulation_args.number_of_blocks
+        };
+
+        imbibitionSaturationChartData = new PlotData()
+        {
+            imbibition_saturation = simulation.GetSaturationImbibition(),
+            blocks = simulation_args.number_of_blocks
+        };
+
+        drainagePressureChart.ChangeDataset(ref drainagePressureChartData);
+        drainageSaturationChart.ChangeDataset(ref drainageSaturationChartData);
+        imbibitionPressureChart.ChangeDataset(ref imbibitionPressureChartData);
+        imbibitionSaturationChart.ChangeDataset(ref imbibitionSaturationChartData);
+    }
+
+    public async Task startSim()
+    {
+        if (core_form_is_submitted && sim_form_is_submitted)
+        {
+            rock_core = new RCore(rock_args);
+            simulation = new ParallelIMPES(rock_core, simulation_args, true);
+            simulation.grid();
+            simStartProgressBar = ProgressBarElements.StartedSimulation;
+            await Task.Run(()=>simulation.solverManifold());
+            simFinishedProgressBar = ProgressBarElements.FinishedSimulation;
+            sendPlotData();
+        }
+        else
+        {
+            needsParameterAlert = new("<div class=\"alert alert-warning\" role=\"alert\">Still needs to fill all the required form data!</div>");
+        }
+    }
+}

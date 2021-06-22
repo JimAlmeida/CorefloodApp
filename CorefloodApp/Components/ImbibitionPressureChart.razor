@@ -1,0 +1,141 @@
+﻿@using ChartJs.Blazor;
+@using ChartJs.Blazor.Common;
+@using ChartJs.Blazor.ScatterChart;
+@using ChartJs.Blazor.Interop;
+@using ChartJs.Blazor.Util;
+@using ChartJs.Blazor.LineChart;
+@using ChartJs.Blazor.Common.Axes;
+@using ChartJs.Blazor.Common.Axes.Ticks;
+@using Coreflood;
+@using MatBlazor;
+
+<Chart Config="configuration" @ref="mychart"/>
+<MatSlider Step="1" EnableStep="true" ValueMin="0" ValueMax="@sliderMaxValue" Markers="true" Pin="true" TValue="int" Discrete="true" @ref="slider" ValueChanged="@OnSliderChange"/>
+
+@code {
+    [Parameter]
+    public PlotData plotData { get; set; }
+
+    public int sliderIndex { get; set; }
+    public int sliderMaxValue { get; set; }
+
+    Chart mychart;
+    public MatSlider<int> slider;
+
+    ScatterConfig configuration;
+    ScatterDataset my_data;
+
+    List<CartesianAxis> XAxisSet;
+    List<CartesianAxis> YAxisSet;
+
+    protected override void OnInitialized()
+    {
+        plotData = null;
+        configuration = new ScatterConfig();
+
+        setUpAxis();
+        setUpChartOptions();
+        setUpDatasetConfig();
+
+        sliderMaxValue = 10;
+    }
+
+    private void setUpDatasetConfig()
+    {
+        List<Point> points = new();
+
+        my_data = new(points);
+        my_data.BackgroundColor = "rgb(222, 112, 1)";
+        my_data.ShowLine = true;
+        my_data.Fill = ChartJs.Blazor.Common.Enums.FillingMode.Start;
+        my_data.PointRadius = 0;
+        my_data.PointHoverRadius = 0;
+        my_data.Label = "Imbibition Pressure";
+        
+        configuration.Data.Datasets.Add(my_data);
+    }
+
+    private void setUpAxis(int maxValue=1)
+    {
+        var xAxis = new LinearCartesianAxis();
+        var yAxis = new LinearCartesianAxis();
+
+        yAxis.ScaleLabel = new ScaleLabel("Pressure");
+        yAxis.ScaleLabel.Display = true;
+        xAxis.ScaleLabel = new ScaleLabel("Blocks");
+        xAxis.ScaleLabel.Display = true;
+
+        xAxis.Ticks = new LinearCartesianTicks() { Min = 1 };
+        yAxis.Ticks = new LinearCartesianTicks() { Min = 0, Max = maxValue };
+
+        XAxisSet = new List<CartesianAxis>();
+        XAxisSet.Add(xAxis);
+
+        YAxisSet = new List<CartesianAxis>();
+        YAxisSet.Add(yAxis);
+    }
+
+    private void setUpChartOptions()
+    {
+        configuration.Options = new ChartJs.Blazor.LineChart.LineOptions();
+        configuration.Options.Responsive = true;
+
+        configuration.Options.Title = new OptionsTitle() 
+        { 
+            Display = true,
+            Text = "Imbibition Pressure Curve",
+            FontSize = 24
+        };
+        configuration.Options.Scales = new Scales()
+        {
+            XAxes = XAxisSet,
+            YAxes = YAxisSet
+        };
+    }
+
+    private void OnSliderChange(int newSliderIndex)
+    {
+         sliderIndex = newSliderIndex;
+         if (plotData != null)
+         {
+            ChangePlotData(sliderIndex);
+         } 
+    }
+
+    private void ChangePlotData(int newSliderIndex)
+    {   
+        List<Point> points = new();
+        for (int i = 0; i < plotData.blocks; ++i)
+        {
+            points.Add(new Point(i+1, plotData.imbibition_pressure[sliderIndex][i]));
+        }
+        my_data.Clear();
+        my_data.AddRange(points);
+        mychart.Update();
+    }
+
+    public void ChangeDataset(ref PlotData data)
+    {
+        plotData = data;
+        sliderIndex = 0;
+        sliderMaxValue = plotData.imbibition_pressure.Count-1;
+        double max = findDatasetMax(plotData.imbibition_pressure);
+        setUpAxis((int)max + 1);
+        setUpChartOptions(); //update Scales with new Axis
+        ChangePlotData(sliderIndex);
+    }
+    
+    private double findDatasetMax(List<double[]> dataset)
+    {
+        double max = 0;
+        double aux = 0;
+        for (int i = 0; i < dataset.Count; ++i)
+        {
+            aux = dataset[i].Max();
+            max = (max < aux) ? aux : max;
+        }
+        return max;
+    }
+    
+    
+}

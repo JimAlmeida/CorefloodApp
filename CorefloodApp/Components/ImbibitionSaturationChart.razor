@@ -1,0 +1,150 @@
+﻿@using ChartJs.Blazor;
+@using ChartJs.Blazor.Common;
+@using ChartJs.Blazor.ScatterChart;
+@using ChartJs.Blazor.Interop;
+@using ChartJs.Blazor.Util;
+@using ChartJs.Blazor.LineChart;
+@using ChartJs.Blazor.Common.Axes;
+@using ChartJs.Blazor.Common.Axes.Ticks;
+@using Coreflood;
+@using MatBlazor;
+
+<Chart Config="configuration" @ref="saturationPlot"/>
+<MatSlider Step="1" EnableStep="true" ValueMin="0" ValueMax="@sliderMaxValue" Markers="true" Pin="true" TValue="int" Discrete="true" @ref="slider" ValueChanged="@OnSliderChange"/>
+
+@code {
+    [Parameter]
+    public PlotData plotData { get; set; }
+
+    public int sliderIndex { get; set; }
+    public int sliderMaxValue { get; set; }
+
+    Chart saturationPlot;
+    public MatSlider<int> slider;
+
+    ScatterConfig configuration = new ScatterConfig();
+    ScatterDataset water_distribution;
+    ScatterDataset oil_distribution;
+
+    List<CartesianAxis> XAxisSet;
+    List<CartesianAxis> YAxisSet;
+
+    protected override void OnInitialized()
+    {
+        plotData = null;
+
+        setUpAxis();
+        setUpChartOptions();
+        setUpDatasetConfig();
+
+        sliderMaxValue = 10;
+    }
+
+    private void setUpDatasetConfig()
+    {
+        List<Point> points = new();
+
+        water_distribution = new(points)
+        {
+            BackgroundColor = "rgb(24, 122, 175)",
+            ShowLine = true,
+            PointRadius = 0,
+            PointHoverRadius = 0,
+            Fill = ChartJs.Blazor.Common.Enums.FillingMode.Start,
+            Label = "Water Saturation"
+        };
+
+        oil_distribution = new(points)
+        {
+            BackgroundColor = "rgb(60, 60, 60)",
+            ShowLine = true,
+            PointRadius = 0,
+            PointHoverRadius = 0,
+            Fill = ChartJs.Blazor.Common.Enums.FillingMode.Absolute(0),
+            Label = "Oil Saturation"
+        };
+
+        configuration.Data.Datasets.Add(water_distribution);
+        configuration.Data.Datasets.Add(oil_distribution);
+    }
+
+    private void setUpChartOptions()
+    {
+        configuration.Options = new ChartJs.Blazor.LineChart.LineOptions();
+        configuration.Options.Responsive = true;
+        configuration.Options.Title = new OptionsTitle() 
+        { 
+            Display = true,
+            Text = "Imbibition Saturation Curve",
+            FontSize = 24
+        };
+
+        configuration.Options.Scales = new Scales()
+        {
+            XAxes = XAxisSet,
+            YAxes = YAxisSet
+        };
+    }
+
+    private void setUpAxis()
+    {
+        var xAxis = new LinearCartesianAxis();
+        var yAxis = new LinearCartesianAxis();
+        yAxis.Ticks = new LinearCartesianTicks() { Min = 0, Max = 1 };
+        xAxis.Ticks = new LinearCartesianTicks() { Min = 1 };
+        yAxis.ScaleLabel = new ScaleLabel("Saturation");
+        yAxis.ScaleLabel.Display = true;
+        xAxis.ScaleLabel = new ScaleLabel("Blocks");
+        xAxis.ScaleLabel.Display = true;
+
+        XAxisSet = new List<CartesianAxis>();
+        XAxisSet.Add(xAxis);
+
+        YAxisSet = new List<CartesianAxis>();
+        YAxisSet.Add(yAxis);
+    }
+
+    private void OnSliderChange(int newSliderIndex)
+    {
+         sliderIndex = newSliderIndex;
+         if (plotData != null)
+         {
+            AddWaterDistribution(sliderIndex);
+         }
+         saturationPlot.Update();
+    }
+
+    private void AddWaterDistribution(int newSliderIndex)
+    {   
+        List<Point> points = new();
+        for (int i = 0; i < plotData.blocks; ++i)
+        {
+            points.Add(new Point(i+1, plotData.imbibition_saturation[sliderIndex][i]));
+        }
+        water_distribution.Clear();
+        water_distribution.AddRange(points);
+    }
+
+    private void AddOilDistribution()
+    {
+        List<Point> points = new();
+
+        for (int i = 0; i < plotData.blocks; ++i)
+        {
+            points.Add(new Point(i+1, 1));
+        }
+        oil_distribution.Clear();
+        oil_distribution.AddRange(points);
+    }
+
+    public void ChangeDataset(ref PlotData data)
+    {
+        plotData = data;
+        sliderIndex = 0;
+        sliderMaxValue = plotData.imbibition_saturation.Count-1;
+        AddOilDistribution();
+        AddWaterDistribution(sliderIndex);
+        saturationPlot.Update();
+    }
+    
+}

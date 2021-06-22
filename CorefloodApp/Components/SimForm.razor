@@ -1,141 +1,121 @@
 ﻿@using Microsoft.AspNetCore.Components.Web;
 @using Microsoft.AspNetCore.Components.Forms;
 @using Coreflood;
+@using CorefloodApp.Components;
+@implements IDisposable
 
-<div class="container-fluid mt-3">
-    <div class = "row">
-        <div class="col-md-6">
-            <EditForm Model="@rock_args" OnValidSubmit="@onValidRockSubmit">
-                <DataAnnotationsValidator/>
-                <div class="form-floating mb-3">
-                    <InputNumber @bind-Value="rock_args.porosity" class="form-control" id="porosity"/>
-                    <label for="porosity">Porosity</label>
-                    <span class="form-text mt-1">Porosity values must be given as a decimal value between 0 and 1.</span>
-                    <ValidationMessage For="() => rock_args.porosity"/>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.diameter">
-                    <label for="floatingInput">Diameter</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.length">
-                    <label for="floatingInput">Length</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.permeability">
-                    <label for="floatingInput">Permeability</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.exp_krw">
-                    <label for="floatingInput">Relative Permeability to Water (Krw)</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.exp_kro">
-                    <label for="floatingInput">Relative Permeability to Oil (Kro)</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.krwMax">
-                    <label for="floatingInput">Maximum Relative Permeability to Water (Krw)</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.kroMax">
-                    <label for="floatingInput">Maximum Relative Permeability to Oil (Kro)</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.pct">
-                    <label for="floatingInput">Capillary Pressure</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput"  min="0.0" max="1.0" step="0.01" @bind-value="rock_args.pcMax">
-                    <label for="floatingInput">Maximum Capillary Pressure</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput" @bind-value="rock_args.sor">
-                    <label for="floatingInput">Residual Oil Saturation (Sor)</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                    <ValidationMessage For="() => rock_args.sor"/>
-                </div>
-                <div class="form-floating mb-3">
-                    <input type="number" class="form-control" id="floatingInput" @bind-value="rock_args.swi">
-                    <label for="floatingInput">Initial Water Saturation (Swi)</label>
-                    <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                    <ValidationMessage For="() => rock_args.swi"/>
-                </div>
-                <button type="submit" class="btn btn-primary">Save Core Args</button>
-            </EditForm>
-        </div>
-        <div class="col-md-6">
-            <EditForm Model="@simulation_args" OnValidSubmit="@onValidSimSubmit">
-                <DataAnnotationsValidator />
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.atmospheric_pressure">
-                  <label for="floatingInput">Absolute Atmospheric Pressure</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.injection_flow">
-                  <label for="floatingInput">Injection Flow Rate</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.oil_velocity">
-                  <label for="floatingInput">Oil Phase Velocity</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.water_velocity">
-                  <label for="floatingInput">Water Phase Velocity</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.maximum_saturation_step">
-                  <label for="floatingInput">Maximum Saturation Variation (DSMax)</label>
-                  <span class="form-text mt-1">This is a control parameter for the IMPES simulation.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.pore_volume_injected_in_drainage">
-                  <label for="floatingInput">Injected Pore Volume during Drainage</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.pore_volume_injected_in_imbibition">
-                  <label for="floatingInput">Injected Pore Volume during Imbibition</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-                <div class="form-floating mb-3">
-                  <input type="number" class="form-control" id="floatingInput" placeholder="0.2" min="0.0" max="1.0" step="0.01" @bind-value="simulation_args.initial_saturation">
-                  <label for="floatingInput">Initial Water Saturation</label>
-                  <span class="form-text mt-1">Insert here a description of the property or validation rule.</span>
-                </div>
-            </EditForm>
-        </div>
+
+<EditForm Model="@simulation_args" OnValidSubmit="@onValidSimSubmit">
+    <DataAnnotationsValidator />
+    <div class= "row mb-3 p-3">
+        <button type="submit" class="btn btn-primary">Save Simulation Args</button>
     </div>
-</div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.number_of_blocks" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Number of blocks</label>
+        <span class="form-text mt-1">This property has a large impact on performance. The larger the number, the slower it will be to reach a solution. Thus, a maximum of 1000 blocks is permitted.</span>
+        <ValidationMessage For="() => simulation_args.number_of_blocks"/>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.pore_volume_injected_in_drainage" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Injected Pore Volume during Drainage (@volume_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.pore_volume_injected_in_imbibition" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Injected Pore Volume during Imbibition (@volume_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.initial_saturation" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Initial Water Saturation</label>
+        <span class="form-text mt-1">Saturation values are not expressed in percentage, it is to be a number between 0 and 1.</span>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.atmospheric_pressure" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Absolute Atmospheric Pressure (@pressure_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.injection_flow" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Injection Flow Rate (@flow_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.oil_viscosity" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Oil Viscosity (@viscosity_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.water_viscosity" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Water Viscosity (@viscosity_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="simulation_args.maximum_saturation_step" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Maximum Saturation Variation (ΔSMax)</label>
+        <span class="form-text mt-1">This is a control parameter for the IMPES simulation.</span>
+    </div>
+
+</EditForm>
+
 
 @code {
-    private IMPESArgs simulation_args = new IMPESArgs();
-    private CoreArgs rock_args = new CoreArgs();
-
-    public void onValidRockSubmit()
+    private IMPESArgs simulation_args = new IMPESArgs()
     {
-     
+        pore_volume_injected_in_drainage = 10,
+        pore_volume_injected_in_imbibition = 25,
+        maximum_saturation_step = 0.001,
+        water_viscosity = 1,
+        oil_viscosity = 10,
+        injection_flow = 0.05,
+        atmospheric_pressure = 1,
+        initial_saturation = 1,
+        number_of_blocks = 50
+    };
+
+    [Parameter]
+    public EventCallback<IMPESArgs> FormComplete { get; set; }
+
+
+    private string pressure_unit { get; set; }
+    private string flow_unit { get; set; }
+    private string viscosity_unit { get; set; }
+    private string volume_unit { get; set; }
+
+    protected override void OnInitialized()
+    {
+        changeToDarcyUnitSystem();
+    }
+    
+    public void changeToDarcyUnitSystem(){
+         pressure_unit = "atm";
+         flow_unit = "cm³/s";
+         viscosity_unit = "cP";
+         volume_unit = "cm³";
+    }
+
+    public void changeToInternationalUnitSystem()
+    {
+         pressure_unit = "Pa";
+         flow_unit = "m³/s";
+         viscosity_unit = "Pa.s";
+         volume_unit = "m³";
+    }
+
+    public void changeUnitSystem(string newUnit)
+    {
+        if (newUnit=="si")
+        {
+            changeToInternationalUnitSystem();
+            
+        }
+        else {
+            changeToDarcyUnitSystem();
+        }
     }
 
     public void onValidSimSubmit()
     {
+        FormComplete.InvokeAsync(simulation_args);
     }
 
     public void Dispose()
     {
-        
+      
     }
 }

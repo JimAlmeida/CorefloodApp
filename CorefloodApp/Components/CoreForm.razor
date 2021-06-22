@@ -1,0 +1,140 @@
+﻿@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Coreflood;
+@using CorefloodApp.Components;
+
+
+<EditForm Model="@rock_args" OnValidSubmit="@onValidRockSubmit">
+    <DataAnnotationsValidator/>
+    <div class= "row mb-3 p-3">
+        <button type="submit" class="btn btn-primary">Save Core Args</button>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.porosity" class="form-control" id="floatingInput"/>
+        <label for="porosity">Porosity (m³/m³)</label>
+        <span class="form-text mt-1">Porosity values must be given as a decimal value between 0 and 1.</span>
+        <ValidationMessage For="() => rock_args.porosity"/>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber TValue="double" @bind-Value="rock_args.diameter" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Rock Plug Diameter (@diameter_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.length" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Rock Plug Length (@length_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.permeability" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Permeability (@permeability_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.sor" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Residual Oil Saturation (Sor)</label>
+        <span class="form-text mt-1">Saturation values are not expressed in percentage, it is to be a number between 0 and 1.</span>
+        <ValidationMessage For="() => rock_args.sor"/>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.swi" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Irreducible Water Saturation (Swi)</label>
+        <span class="form-text mt-1">Saturation values are not expressed in percentage, it is to be a number between 0 and 1.</span>
+        <ValidationMessage For="() => rock_args.swi"/>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.exp_krw" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Exponent to Water's Relative Permeability Equation</label>
+        <span class="form-text mt-1">The Water Relative Permeability Equation used in the simulation is expressed by a Power Law.</span>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.krwMax" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Relative Permeability to Water at Maximum Water Saturation</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.exp_kro" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Exponent to Oil's Relative Permeability Equation</label>
+        <span class="form-text mt-1">The Oil Relative Permeability Equation used in the simulation is expressed by a Power Law.</span>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.kroMax" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Relative Permeability to Oil at Irreducible Water Saturation</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.exp_pc" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Exponent to Capillary Pressure's Equation</label>
+        <span class="form-text mt-1">The Capillary Pressure Equation used in the simulation is expressed as a Power Law.</span>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.pcMax" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Capillary Pressure at Irreducible Water Saturation (@pc_unit)</label>
+    </div>
+    <div class="form-floating mb-3">
+        <InputNumber @bind-Value="rock_args.pct" class="form-control" id="floatingInput"/>
+        <label for="floatingInput">Threshold Capillary Pressure (@pct_unit)</label>
+    </div>
+</EditForm>
+
+@code {
+    private CoreArgs rock_args = new CoreArgs()
+    {
+        porosity = 0.2,
+        permeability = 0.3,
+        diameter = 3.81,
+        length = 10,
+        exp_krw = 3,
+        exp_kro = 3,
+        exp_pc = 4,
+        krwMax = 0.4,
+        kroMax = 0.8,
+        pcMax = 4.08,
+        sor = 0.1,
+        swi = 0.2,
+        pct = 1.5
+    };
+
+    private string diameter_unit { get; set; }
+    private string length_unit { get; set; }
+    private string permeability_unit { get; set; }
+    private string pc_unit { get; set; }
+    private string pct_unit { get; set; }
+
+    [Parameter]
+    public EventCallback<CoreArgs> FormComplete { get; set; }
+
+    protected override void OnInitialized()
+    {
+        changeToDarcyUnitSystem();
+    }
+    
+    public void changeToDarcyUnitSystem(){
+         diameter_unit = "cm";
+         length_unit = "cm";
+         permeability_unit = "Darcy";
+         pc_unit = "atm";
+         pct_unit = "atm";
+    }
+
+    public void changeToInternationalUnitSystem()
+    {
+         diameter_unit = "m";
+         length_unit = "m";
+         permeability_unit = "m²";
+         pc_unit = "Pa";
+         pct_unit = "Pa";
+    }
+
+    public void changeUnitSystem(string newUnit)
+    {
+        if (newUnit=="si")
+        {
+            changeToInternationalUnitSystem();
+            
+        }
+        else {
+            changeToDarcyUnitSystem();
+        }
+    }
+
+    public void onValidRockSubmit()
+    {
+        FormComplete.InvokeAsync(rock_args);
+    }
+}

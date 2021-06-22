@@ -1,22 +1,40 @@
 ﻿@using Microsoft.AspNetCore.Components.Web;
 @using Blazorise.Charts;
 @using Blazorise;
+@using Plotly;
+@page "/"
+@inject Microsoft.AspNetCore.Components.NavigationManager nav
 
 <div class="container ms-2 mt-2">
     <h1>Coreflood Simulator</h1>
-    <h2>Simulation Results:</h2>
+    <h2>Simulation Results: @SimStatus</h2>
 
     <Button Clicked="@(async () => await HandleRedraw())" Class="btn btn-primary">Redraw</Button>
+    <Button Clicked="@(() => nav.NavigateTo("wwwroot/Page2.html", forceLoad: true))" Class="btn btn-primary">Navigate</Button>
+   
 </div>
 
 <div class="container">
     <LineChart @ref="lineChart" TItem="double" />
 </div>
 
+<div class="container">
+    @elem.ToString();
+</div>
+
 @code {
+    [Parameter]
+    public string SimStatus { get; set; }
+
     LineChart<double> lineChart;
     LineChartDataset<double> model = new LineChartDataset<double>();
-    
+    MarkupString elem = new("<h2> I am a markup element </h2>");
+    private float[][] testData = new[]{
+        new float[]{ 1, 20, 30 },
+        new float[]{20,  1, 60 },
+        new float[]{30, 60,  1 }
+    };
+
     protected override async Task OnAfterRenderAsync( bool firstRender )
     {
         if ( firstRender )
@@ -24,6 +42,8 @@
             await HandleRedraw();
         }
     }
+
+    
 
     async Task HandleRedraw()
     {
@@ -46,7 +66,12 @@
         };
     }
 
-    string[] Labels = { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" };
+    public void setLineChartDataset(List<double> set)
+    {
+        
+    }
+
+    public string[] Labels = { "Red", "Blue", "Yellow", "Green", "Purple", "Orange" };
     List<string> backgroundColors = new List<string> { ChartColor.FromRgba( 255, 99, 132, 0.2f ), ChartColor.FromRgba( 54, 162, 235, 0.2f ), ChartColor.FromRgba( 255, 206, 86, 0.2f ), ChartColor.FromRgba( 75, 192, 192, 0.2f ), ChartColor.FromRgba( 153, 102, 255, 0.2f ), ChartColor.FromRgba( 255, 159, 64, 0.2f ) };
     List<string> borderColors = new List<string> { ChartColor.FromRgba( 255, 99, 132, 1f ), ChartColor.FromRgba( 54, 162, 235, 1f ), ChartColor.FromRgba( 255, 206, 86, 1f ), ChartColor.FromRgba( 75, 192, 192, 1f ), ChartColor.FromRgba( 153, 102, 255, 1f ), ChartColor.FromRgba( 255, 159, 64, 1f ) };
 

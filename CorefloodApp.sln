@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CorefloodApp", "CorefloodApp\CorefloodApp.csproj", "{6B495AE7-7039-4845-80E8-139F66C8A41F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coreflood", "..\Coreflood\Coreflood\Coreflood.csproj", "{0772B7C2-0D6B-4657-B279-95A10C0094BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coreflood", "..\Coreflood\Coreflood\Coreflood.csproj", "{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{6B495AE7-7039-4845-80E8-139F66C8A41F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B495AE7-7039-4845-80E8-139F66C8A41F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B495AE7-7039-4845-80E8-139F66C8A41F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0772B7C2-0D6B-4657-B279-95A10C0094BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0772B7C2-0D6B-4657-B279-95A10C0094BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0772B7C2-0D6B-4657-B279-95A10C0094BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0772B7C2-0D6B-4657-B279-95A10C0094BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9199C4E-D5EC-488E-B42A-3C1EFA51A6CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
